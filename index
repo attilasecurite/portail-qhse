@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portail QHSE — ATTILA</title>
+<meta name="description" content="Portail QHSE du réseau ATTILA : outils opérationnels, documentation, animation sécurité, certifications.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* ===== CHARTE ATTILA — ajuste ici si besoin ===== */
+  --rouge:#D8232A;
+  --rouge-fonce:#B01B21;
+  --anthracite:#24272B;
+  --anthracite-2:#31353A;
+  --gris-fond:#F3F4F5;
+  --gris-ligne:#E2E4E6;
+  --gris-texte:#5A6066;
+  --blanc:#FFFFFF;
+  --ok:#1E8E4E;
+  --attente:#C58A00;
+  --radius:10px;
+  --shadow:0 2px 10px rgba(36,39,43,.08);
+  --shadow-hover:0 8px 24px rgba(36,39,43,.16);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto} *{transition:none!important;animation:none!important}}
+body{
+  font-family:'Barlow',system-ui,sans-serif;
+  background:var(--gris-fond);
+  color:var(--anthracite);
+  line-height:1.55;
+}
+a{color:var(--rouge);text-decoration:none}
+a:focus-visible,button:focus-visible{outline:3px solid var(--rouge);outline-offset:2px}
+
+/* ===== HEADER ===== */
+header{
+  background:var(--anthracite);
+  color:var(--blanc);
+  position:sticky;top:0;z-index:50;
+  box-shadow:0 2px 8px rgba(0,0,0,.25);
+}
+.header-inner{
+  max-width:1180px;margin:0 auto;
+  display:flex;align-items:center;gap:24px;
+  padding:0 24px;height:64px;
+}
+.logo{display:flex;align-items:baseline;gap:10px;flex-shrink:0}
+.logo .marque{
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:800;font-size:26px;letter-spacing:.04em;
+  color:var(--blanc);
+}
+.logo .marque span{color:var(--rouge)}
+.logo .portail{
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:600;font-size:15px;letter-spacing:.14em;
+  text-transform:uppercase;color:#9BA1A8;
+  border-left:2px solid var(--rouge);padding-left:10px;
+}
+nav{margin-left:auto;display:flex;gap:4px;flex-wrap:wrap}
+nav a{
+  color:#C9CDD2;font-weight:600;font-size:14px;
+  padding:8px 12px;border-radius:6px;
+  transition:color .15s,background .15s;
+}
+nav a:hover{color:var(--blanc);background:var(--anthracite-2)}
+
+/* ===== HERO ===== */
+.hero{
+  background:var(--anthracite);
+  color:var(--blanc);
+  position:relative;
+  padding:56px 24px 96px;
+}
+.hero-inner{max-width:1180px;margin:0 auto;position:relative;z-index:2}
+.hero .eyebrow{
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:700;font-size:15px;letter-spacing:.22em;
+  text-transform:uppercase;color:var(--rouge);
+  display:flex;align-items:center;gap:12px;
+}
+.hero .eyebrow::before{content:"";width:34px;height:3px;background:var(--rouge)}
+.hero h1{
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:800;font-size:clamp(38px,5.5vw,60px);
+  line-height:1.05;text-transform:uppercase;letter-spacing:.01em;
+  margin:14px 0 12px;max-width:820px;
+}
+.hero h1 em{font-style:normal;color:var(--rouge)}
+.hero p{color:#C9CDD2;font-size:17px;max-width:640px}
+.hero-actions{display:flex;gap:14px;margin-top:28px;flex-wrap:wrap}
+.btn{
+  display:inline-flex;align-items:center;gap:10px;
+  font-weight:700;font-size:15px;
+  padding:13px 22px;border-radius:8px;border:none;cursor:pointer;
+  transition:transform .15s,box-shadow .15s,background .15s;
+}
+.btn-rouge{background:var(--rouge);color:var(--blanc)}
+.btn-rouge:hover{background:var(--rouge-fonce);transform:translateY(-2px);box-shadow:var(--shadow-hover)}
+.btn-ghost{background:transparent;color:var(--blanc);border:2px solid #4A4F55}
+.btn-ghost:hover{border-color:var(--blanc);transform:translateY(-2px)}
+/* ligne de toiture — signature du portail */
+.roofline{
+  position:absolute;left:0;right:0;bottom:-1px;height:64px;
+  display:block;width:100%;
+}
+
+/* ===== SECTIONS ===== */
+main{max-width:1180px;margin:0 auto;padding:0 24px 80px}
+section{padding-top:64px}
+.section-head{display:flex;align-items:baseline;gap:16px;margin-bottom:8px;flex-wrap:wrap}
+.section-head h2{
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:800;font-size:32px;text-transform:uppercase;
+  letter-spacing:.02em;
+  display:flex;align-items:center;gap:14px;
+}
+.section-head h2::before{
+  content:"";width:12px;height:26px;background:var(--rouge);
+  transform:skewX(-12deg);flex-shrink:0;
+}
+.section-head .sub{color:var(--gris-texte);font-size:15px}
+.section-desc{color:var(--gris-texte);max-width:720px;margin-bottom:26px}
+
+/* ===== CARTES OUTILS ===== */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px}
+.card{
+  background:var(--blanc);border-radius:var(--radius);
+  box-shadow:var(--shadow);border:1px solid var(--gris-ligne);
+  border-top:4px solid var(--rouge);
+  padding:24px;display:flex;flex-direction:column;gap:12px;
+  transition:transform .15s,box-shadow .15s;
+}
+.card:hover{transform:translateY(-4px);box-shadow:var(--shadow-hover)}
+.card.soon{border-top-color:var(--gris-ligne);opacity:.85}
+.card .icone{font-size:30px;line-height:1}
+.card h3{
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:700;font-size:22px;text-transform:uppercase;letter-spacing:.02em;
+}
+.card p{color:var(--gris-texte);font-size:14.5px;flex-grow:1}
+.card .statut{
+  display:inline-flex;align-items:center;gap:7px;
+  font-size:12.5px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;
+}
+.statut::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor}
+.statut.en-ligne{color:var(--ok)}
+.statut.bientot{color:var(--attente)}
+.card .btn{align-self:flex-start;padding:10px 18px;font-size:14px}
+.card .btn[aria-disabled="true"]{background:var(--gris-ligne);color:var(--gris-texte);cursor:not-allowed;transform:none;box-shadow:none}
+
+/* ===== FLASH SÉCURITÉ ===== */
+.flash-liste{display:flex;flex-direction:column;gap:16px}
+.flash{
+  background:var(--blanc);border:1px solid var(--gris-ligne);
+  border-left:6px solid var(--rouge);
+  border-radius:var(--radius);box-shadow:var(--shadow);
+  padding:22px 26px;
+}
+.flash.presqu-accident{border-left-color:var(--attente)}
+.flash.alerte{border-left-color:var(--anthracite)}
+.flash-meta{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:10px}
+.flash-badge{
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;
+  letter-spacing:.12em;text-transform:uppercase;
+  color:var(--blanc);background:var(--rouge);
+  padding:4px 12px;border-radius:4px;
+}
+.flash.presqu-accident .flash-badge{background:var(--attente)}
+.flash.alerte .flash-badge{background:var(--anthracite)}
+.flash-meta .date,.flash-meta .agence{
+  font-size:13.5px;font-weight:600;color:var(--gris-texte);
+  display:flex;align-items:center;gap:6px;
+}
+.flash h3{
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;
+  font-size:23px;text-transform:uppercase;letter-spacing:.01em;
+  margin-bottom:8px;
+}
+.flash .faits{color:var(--gris-texte);font-size:14.5px;margin-bottom:14px}
+.flash .retenir{
+  background:var(--gris-fond);border-radius:8px;padding:14px 18px;
+  font-size:14.5px;
+}
+.flash .retenir strong{
+  display:block;font-family:'Barlow Condensed',sans-serif;
+  font-size:15px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--rouge);margin-bottom:6px;
+}
+.flash.presqu-accident .retenir strong{color:var(--attente)}
+.flash.alerte .retenir strong{color:var(--anthracite)}
+.flash .flash-lien{
+  display:inline-flex;align-items:center;gap:8px;
+  margin-top:14px;font-weight:700;font-size:14px;
+}
+.flash .flash-lien:hover{text-decoration:underline}
+.flash-vide{
+  background:var(--blanc);border:1px dashed var(--gris-ligne);border-radius:var(--radius);
+  padding:30px;text-align:center;color:var(--gris-texte);
+}
+
+/* ===== VISIONNEUSE PDF ===== */
+.pdf-overlay{
+  position:fixed;inset:0;z-index:100;
+  background:rgba(20,22,25,.75);
+  display:none;align-items:center;justify-content:center;
+  padding:24px;
+}
+.pdf-overlay.ouvert{display:flex}
+.pdf-fenetre{
+  background:var(--blanc);border-radius:var(--radius);
+  width:min(960px,100%);height:min(88vh,100%);
+  display:flex;flex-direction:column;overflow:hidden;
+  box-shadow:0 20px 60px rgba(0,0,0,.4);
+}
+.pdf-barre{
+  background:var(--anthracite);color:var(--blanc);
+  display:flex;align-items:center;gap:14px;
+  padding:12px 18px;flex-shrink:0;
+}
+.pdf-barre .titre{
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;
+  font-size:18px;text-transform:uppercase;letter-spacing:.03em;
+  flex-grow:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.pdf-barre a{
+  color:#C9CDD2;font-size:13.5px;font-weight:600;white-space:nowrap;
+}
+.pdf-barre a:hover{color:var(--blanc)}
+.pdf-fermer{
+  background:var(--rouge);color:var(--blanc);border:none;cursor:pointer;
+  width:34px;height:34px;border-radius:6px;font-size:18px;font-weight:700;
+  flex-shrink:0;line-height:1;
+}
+.pdf-fermer:hover{background:var(--rouge-fonce)}
+.pdf-fenetre iframe{flex-grow:1;border:none;width:100%;background:var(--gris-fond)}
+@media (max-width:700px){.pdf-overlay{padding:0}.pdf-fenetre{border-radius:0;height:100%}}
+
+/* ===== IMAGES : flash, galerie, lightbox ===== */
+.flash-photo{
+  margin-top:14px;border-radius:8px;overflow:hidden;
+  border:1px solid var(--gris-ligne);cursor:zoom-in;
+  max-width:420px;
+}
+.flash-photo img{display:block;width:100%;height:auto}
+.flash-photo:hover img{opacity:.92}
+
+.galerie-grille{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;
+}
+.galerie-item{
+  background:var(--blanc);border:1px solid var(--gris-ligne);
+  border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);
+  cursor:zoom-in;transition:transform .15s,box-shadow .15s;
+}
+.galerie-item:hover{transform:translateY(-4px);box-shadow:var(--shadow-hover)}
+.galerie-item img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover}
+.galerie-item .legende{
+  padding:10px 14px;font-size:13.5px;font-weight:600;color:var(--anthracite);
+  border-top:3px solid var(--rouge);
+}
+.galerie-vide{
+  background:var(--blanc);border:1px dashed var(--gris-ligne);border-radius:var(--radius);
+  padding:30px;text-align:center;color:var(--gris-texte);
+}
+
+.img-overlay{
+  position:fixed;inset:0;z-index:110;
+  background:rgba(20,22,25,.88);
+  display:none;align-items:center;justify-content:center;
+  padding:24px;flex-direction:column;gap:14px;
+}
+.img-overlay.ouvert{display:flex}
+.img-overlay img{
+  max-width:min(1100px,100%);max-height:80vh;
+  border-radius:8px;box-shadow:0 20px 60px rgba(0,0,0,.5);
+  background:var(--blanc);
+}
+.img-overlay .img-legende{
+  color:var(--blanc);font-size:15px;font-weight:600;text-align:center;max-width:800px;
+}
+.img-overlay .pdf-fermer{position:absolute;top:20px;right:20px}
+
+/* Affiche du thème du mois + photos d'animation */
+.theme-affiche{margin-top:16px;border-radius:8px;overflow:hidden;cursor:zoom-in;display:none}
+.theme-affiche.visible{display:block}
+.theme-affiche img{display:block;width:100%;height:auto}
+.theme-affiche:hover img{opacity:.92}
+.anim-photos-titre{
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:19px;
+  text-transform:uppercase;letter-spacing:.04em;color:var(--anthracite);
+  margin:28px 0 14px;display:flex;align-items:center;gap:10px;
+}
+.anim-photos-titre::before{content:"";width:8px;height:18px;background:var(--rouge);transform:skewX(-12deg)}
+
+/* ===== DOCUMENTS ===== */
+.doc-groupes{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:20px}
+.doc-groupe{background:var(--blanc);border:1px solid var(--gris-ligne);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+.doc-groupe h3{
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:19px;
+  text-transform:uppercase;letter-spacing:.03em;
+  background:var(--anthracite);color:var(--blanc);
+  padding:12px 20px;display:flex;align-items:center;gap:10px;
+}
+.doc-groupe ul{list-style:none}
+.doc-groupe li{border-top:1px solid var(--gris-ligne)}
+.doc-groupe li:first-child{border-top:none}
+.doc-groupe a{
+  display:flex;align-items:center;gap:12px;
+  padding:13px 20px;color:var(--anthracite);font-weight:500;font-size:14.5px;
+  transition:background .12s;
+}
+.doc-groupe a:hover{background:var(--gris-fond);color:var(--rouge)}
+.doc-groupe a::before{content:"📄";font-size:15px}
+
+/* ===== ANIMATION SÉCURITÉ ===== */
+.animation-wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:20px;align-items:start}
+@media (max-width:860px){.animation-wrap{grid-template-columns:1fr}}
+.theme-mois{
+  background:var(--rouge);color:var(--blanc);
+  border-radius:var(--radius);padding:28px;box-shadow:var(--shadow);
+}
+.theme-mois .eyebrow{
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;
+  letter-spacing:.2em;text-transform:uppercase;opacity:.85;
+}
+.theme-mois h3{
+  font-family:'Barlow Condensed',sans-serif;font-weight:800;
+  font-size:34px;text-transform:uppercase;line-height:1.1;margin:8px 0 10px;
+}
+.theme-mois p{font-size:15px;opacity:.95}
+.theme-mois .btn{background:var(--blanc);color:var(--rouge);margin-top:18px}
+.theme-mois .btn:hover{background:#F3F4F5}
+.quiz-embed{
+  background:var(--blanc);border:1px solid var(--gris-ligne);
+  border-radius:var(--radius);box-shadow:var(--shadow);
+  padding:24px;
+}
+.quiz-embed h3{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:20px;text-transform:uppercase;margin-bottom:6px}
+.quiz-embed p{color:var(--gris-texte);font-size:14.5px;margin-bottom:14px}
+.quiz-embed iframe{width:100%;height:420px;border:1px solid var(--gris-ligne);border-radius:8px;background:var(--gris-fond)}
+
+/* ===== CERTIFICATIONS ===== */
+.certifs{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:20px}
+.certif{
+  background:var(--blanc);border:1px solid var(--gris-ligne);border-radius:var(--radius);
+  box-shadow:var(--shadow);padding:26px;
+}
+.certif h3{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:24px;text-transform:uppercase}
+.certif .objectif{color:var(--gris-texte);font-size:14px;margin:4px 0 16px}
+.barre{height:10px;background:var(--gris-ligne);border-radius:99px;overflow:hidden}
+.barre span{display:block;height:100%;background:var(--rouge);border-radius:99px}
+.certif .valeur{font-weight:700;font-size:14px;margin-top:8px;color:var(--anthracite)}
+
+/* ===== CONTACTS ===== */
+.contact-bande{
+  background:var(--anthracite);color:var(--blanc);
+  border-radius:var(--radius);padding:32px;
+  display:flex;gap:28px;align-items:center;flex-wrap:wrap;justify-content:space-between;
+}
+.contact-bande h2{
+  font-family:'Barlow Condensed',sans-serif;font-weight:800;
+  font-size:28px;text-transform:uppercase;
+}
+.contact-bande p{color:#C9CDD2;font-size:15px;max-width:520px;margin-top:6px}
+.contact-bande strong{color:var(--blanc)}
+
+/* ===== FOOTER ===== */
+footer{
+  background:var(--anthracite);color:#9BA1A8;
+  padding:26px 24px;margin-top:70px;font-size:13.5px;
+}
+.footer-inner{max-width:1180px;margin:0 auto;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+footer .marque{font-family:'Barlow Condensed',sans-serif;font-weight:800;color:var(--blanc);letter-spacing:.04em}
+footer .marque span{color:var(--rouge)}
+
+@media (max-width:700px){
+  .header-inner{height:auto;padding:12px 16px;flex-wrap:wrap;gap:10px}
+  nav{margin-left:0;width:100%}
+  .hero{padding:40px 16px 80px}
+  main{padding:0 16px 60px}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="logo">
+      <!-- Remplace par <img src="logo-attila-blanc.png" alt="ATTILA" height="30"> si tu ajoutes le logo au repo -->
+      <div class="marque">ATTILA<span>.</span></div>
+      <div class="portail">Portail QHSE</div>
+    </div>
+    <nav aria-label="Navigation principale">
+      <a href="#outils">Outils</a>
+      <a href="#flash">Flash sécurité</a>
+      <a href="#documents">Documentation</a>
+      <a href="#animation">Animation sécurité</a>
+      <a href="#galerie">En images</a>
+      <a href="#certifications">Certifications</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="eyebrow">Réseau ATTILA — 133 agences</div>
+    <h1>La sécurité, <em>systématisée</em> sur tout le réseau</h1>
+    <p>Tous les outils, documents et référentiels QHSE du réseau, au même endroit. Un besoin sur chantier ? L'outil est à deux clics.</p>
+    <div class="hero-actions">
+      <a class="btn btn-rouge" href="https://attilasecurite.github.io/plan-prevention/" target="_blank" rel="noopener">🛡️ Plan de prévention</a>
+      <a class="btn btn-ghost" href="#outils">Tous les outils</a>
+    </div>
+  </div>
+  <!-- Signature : ligne de toiture bac acier -->
+  <svg class="roofline" viewBox="0 0 1200 64" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0,64 L0,40 L60,12 L120,40 L180,12 L240,40 L300,12 L360,40 L420,12 L480,40 L540,12 L600,40 L660,12 L720,40 L780,12 L840,40 L900,12 L960,40 L1020,12 L1080,40 L1140,12 L1200,40 L1200,64 Z" fill="#F3F4F5"/>
+  </svg>
+</div>
+
+<main>
+
+  <!-- ============ OUTILS ============ -->
+  <section id="outils">
+    <div class="section-head">
+      <h2>Outils opérationnels</h2>
+      <span class="sub">Applications utilisables directement sur chantier ou en agence</span>
+    </div>
+    <p class="section-desc">Chaque outil génère automatiquement le document réglementaire, l'archive dans le Drive et le transmet à l'agence concernée.</p>
+    <div class="grid" id="grille-outils"></div>
+  </section>
+
+  <!-- ============ FLASH SÉCURITÉ ============ -->
+  <section id="flash">
+    <div class="section-head">
+      <h2>Flash sécurité</h2>
+      <span class="sub">Retour d'expérience du réseau — pour qu'un accident n'arrive jamais deux fois</span>
+    </div>
+    <p class="section-desc">Chaque événement grave ou significatif fait l'objet d'un flash diffusé à l'ensemble des agences. À lire, à afficher, à partager en causerie.</p>
+    <div class="flash-liste" id="liste-flashs"></div>
+  </section>
+
+  <!-- ============ DOCUMENTATION ============ -->
+  <section id="documents">
+    <div class="section-head">
+      <h2>Documentation &amp; référentiels</h2>
+      <span class="sub">Trames, procédures et documents cadres du réseau</span>
+    </div>
+    <div class="doc-groupes" id="grille-docs"></div>
+  </section>
+
+  <!-- ============ ANIMATION SÉCURITÉ ============ -->
+  <section id="animation">
+    <div class="section-head">
+      <h2>Animation sécurité</h2>
+      <span class="sub">Le rendez-vous mensuel de toutes les agences</span>
+    </div>
+    <div class="animation-wrap">
+      <div class="theme-mois">
+        <div class="eyebrow">Thème du mois — Juillet 2026</div>
+        <h3 id="theme-titre">Vigilance partagée</h3>
+        <p id="theme-texte">Je vois, je dis, j'agis : chacun est acteur de la sécurité de tous. Ce mois-ci, chaque remontée de situation dangereuse compte pour le challenge inter-agences.</p>
+        <div class="theme-affiche" id="theme-affiche"><img id="theme-affiche-img" src="" alt="Affiche du thème du mois"></div>
+        <a class="btn" id="theme-lien" href="#" target="_blank" rel="noopener">📊 Voir le classement des agences</a>
+      </div>
+      <div class="quiz-embed">
+        <h3>Quiz du mois</h3>
+        <p>5 minutes, en équipe ou en solo. Les résultats sont transmis automatiquement à votre agence.</p>
+        <!-- Remplace src par l'URL "Intégrer" de ton Google Form du mois -->
+        <iframe id="quiz-iframe" src="" title="Quiz sécurité du mois" loading="lazy"></iframe>
+      </div>
+    </div>
+    <div id="anim-photos-bloc" style="display:none">
+      <div class="anim-photos-titre">La dernière animation en images</div>
+      <div class="galerie-grille" id="anim-photos"></div>
+    </div>
+  </section>
+
+  <!-- ============ GALERIE ============ -->
+  <section id="galerie">
+    <div class="section-head">
+      <h2>Le réseau en images</h2>
+      <span class="sub">Bonnes pratiques, journées sécurité, chantiers exemplaires</span>
+    </div>
+    <div class="galerie-grille" id="grille-galerie"></div>
+  </section>
+
+  <!-- ============ CERTIFICATIONS ============ -->
+  <section id="certifications">
+    <div class="section-head">
+      <h2>Certifications &amp; trajectoire</h2>
+      <span class="sub">Où en est le réseau</span>
+    </div>
+    <div class="certifs">
+      <div class="certif">
+        <h3>MASE</h3>
+        <div class="objectif">Pilote agence de Grigny — déploiement réseau à suivre</div>
+        <div class="barre"><span style="width:45%"></span></div>
+        <div class="valeur">Pilote en cours</div>
+      </div>
+      <div class="certif">
+        <h3>EcoVadis</h3>
+        <div class="objectif">Objectif médaille Silver 2027 · Gold 2028</div>
+        <div class="barre"><span style="width:60%"></span></div>
+        <div class="valeur">Score actuel : 60/100</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CONTACT ============ -->
+  <section id="contact">
+    <div class="contact-bande">
+      <div>
+        <h2>Un doute, une situation dangereuse, un accident ?</h2>
+        <p>Ne restez jamais seul face à une question de sécurité. Contactez le service QHSE : <strong>qhse@attila.fr</strong> — presqu'accidents et situations dangereuses : remontée via le formulaire dédié.</p>
+      </div>
+      <a class="btn btn-rouge" id="lien-signalement" href="#" target="_blank" rel="noopener">🚨 Signaler une situation</a>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <div><span class="marque">ATTILA<span>.</span></span> — Portail QHSE interne · Groupe Attila / Proagiss</div>
+    <div>Direction QHSE · Mise à jour continue</div>
+  </div>
+</footer>
+
+<!-- ===== LIGHTBOX IMAGE ===== -->
+<div class="img-overlay" id="img-overlay" role="dialog" aria-modal="true" aria-label="Image en plein écran">
+  <button class="pdf-fermer" id="img-fermer" aria-label="Fermer">✕</button>
+  <img id="img-pleine" src="" alt="">
+  <div class="img-legende" id="img-legende"></div>
+</div>
+
+<!-- ===== VISIONNEUSE PDF ===== -->
+<div class="pdf-overlay" id="pdf-overlay" role="dialog" aria-modal="true" aria-label="Lecture du document">
+  <div class="pdf-fenetre">
+    <div class="pdf-barre">
+      <span class="titre" id="pdf-titre">Document</span>
+      <a id="pdf-nouvel-onglet" href="#" target="_blank" rel="noopener">Ouvrir dans un nouvel onglet ↗</a>
+      <button class="pdf-fermer" id="pdf-fermer" aria-label="Fermer">✕</button>
+    </div>
+    <iframe id="pdf-iframe" src="" title="Document PDF" loading="lazy"></iframe>
+  </div>
+</div>
+
+<script>
+/* ================================================================
+   CONFIGURATION DU PORTAIL
+   👉 C'est ICI que tu fais vivre le portail.
+   Ajouter un outil = ajouter un objet dans OUTILS. C'est tout.
+   ================================================================ */
+
+const OUTILS = [
+  {
+    icone: "🛡️",
+    titre: "Plan de prévention",
+    description: "Rédaction digitale du plan de prévention : génération PDF, archivage Drive et envoi automatique à l'agence.",
+    url: "https://attilasecurite.github.io/plan-prevention/",
+    statut: "en-ligne"   // "en-ligne" ou "bientot"
+  },
+  {
+    icone: "📋",
+    titre: "Audit chantier",
+    description: "Grille d'audit terrain avec tableau de bord de suivi et routage automatique des résultats vers l'agence auditée.",
+    url: "#", // 👉 REMPLACER par l'URL /exec de ta web app Apps Script
+    statut: "en-ligne"
+  },
+  {
+    icone: "⛑️",
+    titre: "Analyse de risque accès toiture",
+    description: "Détermine les règles EPI et protections à mettre en œuvre selon le type de toiture (bac acier, fibrociment, terrasse, traditionnelle).",
+    url: "#",
+    statut: "bientot"
+  }
+];
+
+const DOCUMENTS = [
+  {
+    groupe: "📕 Documents cadres",
+    liens: [
+      { titre: "Charte SSE ATTILA (V2)", url: "#" },
+      { titre: "Trame DUERP — modèle agence", url: "#" },
+      { titre: "Politique QHSE du réseau", url: "#" }
+    ]
+  },
+  {
+    groupe: "🚑 Accident du travail",
+    liens: [
+      { titre: "Procédure AT — chronologie complète", url: "#" },
+      { titre: "Fiche réflexe : que faire en cas d'accident", url: "#" },
+      { titre: "Analyse d'accident — méthode Ishikawa", url: "#" }
+    ]
+  },
+  {
+    groupe: "☣️ Amiante",
+    liens: [
+      { titre: "Conduite à tenir SS4", url: "#" },
+      { titre: "Suivi médical renforcé (SIR)", url: "#" },
+      { titre: "Fiche réflexe : suspicion amiante sur chantier", url: "#" }
+    ]
+  },
+  {
+    groupe: "♻️ Déchets",
+    liens: [
+      { titre: "Workflow Trackdéchets / BSDA", url: "#" },
+      { titre: "Guide tri des déchets de chantier", url: "#" }
+    ]
+  }
+];
+
+/* ================================================================
+   FLASH SÉCURITÉ
+   👉 Un événement survient → ajoute un bloc EN PREMIER dans la liste
+      (le plus récent en haut). Types possibles :
+      "accident-grave" (rouge) | "presqu-accident" (orange) | "alerte" (anthracite)
+   ⚠️ Toujours anonymiser : jamais de nom, décrire les faits et les causes.
+   ================================================================ */
+
+const FLASHS = [
+  {
+    type: "accident-grave",
+    date: "Juin 2026",
+    agence: "Réseau — Bretagne",          // ou "Toutes agences" si tu préfères ne pas cibler
+    titre: "Chute d'un technicien depuis une toiture",
+    faits: "Lors d'une intervention de maintenance, un technicien a chuté depuis la toiture. Blessures graves. L'analyse des causes (méthode Ishikawa) a mis en évidence des défaillances dans la préparation de l'intervention et la mise en œuvre des protections.",
+    retenir: "Aucune montée en toiture sans analyse de risque préalable et protection collective en place. En cas de doute sur les conditions d'accès : STOP CHANTIER et appel du service QHSE. La règle « zéro chute de toit » n'admet aucune exception.",
+    pdf: ""   // 👉 colle ici le lien Drive du flash : le bouton « Lire le flash complet » apparaîtra automatiquement
+  },
+  {
+    type: "presqu-accident",
+    date: "Juin 2026",
+    agence: "Montargis",
+    titre: "Non-conformité protocole amiante SS4",
+    faits: "Un écart au protocole amiante a été détecté lors d'une intervention SS4. Pas de conséquence pour les intervenants, mais l'analyse a révélé une insuffisance de vérification documentaire avant démarrage.",
+    retenir: "Avant toute intervention sur matériaux susceptibles de contenir de l'amiante : vérification systématique du mode opératoire SS4, des EPI respiratoires et de la traçabilité. Suspicion = arrêt immédiat + remontée QHSE.",
+    pdf: ""   // 👉 colle ici le lien Drive du flash
+  }
+  /* --- Modèle à copier-coller pour un nouveau flash ---
+  {
+    type: "accident-grave",
+    date: "Mois 2026",
+    agence: "Nom de l'agence",
+    titre: "Titre court et factuel",
+    faits: "Ce qui s'est passé, en 2-3 phrases factuelles et anonymisées.",
+    retenir: "La ou les règles à appliquer pour que ça n'arrive plus.",
+    photo: "images/flash-situation.jpg",   // facultatif : photo de la situation (anonymisée !)
+    pdf: "https://lien-drive-vers-le-flash.pdf"
+  },
+  ----------------------------------------------------- */
+];
+
+/* ================================================================
+   IMAGES
+   👉 Dépose tes photos dans le dossier images/ du repo GitHub
+      (Add file → Upload files), puis référence-les ici :
+      "images/nom-photo.jpg"
+   ⚠️ Le repo est PUBLIC : uniquement des photos diffusables
+      (pas de personnes identifiables sans accord, pas de client visible).
+   ================================================================ */
+
+/* Affiche du thème du mois (laisser "" = pas d'affiche) */
+const THEME_AFFICHE = "";   // ex : "images/affiche-juillet-2026.jpg"
+
+/* Photos de la dernière animation (journée sécurité, causerie...) */
+const ANIM_PHOTOS = [
+  // { src: "images/journee-securite-1.jpg", legende: "Journée Sécurité — atelier harnais" },
+  // { src: "images/journee-securite-2.jpg", legende: "Causerie vigilance partagée, agence de Tours" },
+];
+
+/* Galerie "Le réseau en images" */
+const GALERIE = [
+  // { src: "images/bonne-pratique-ligne-de-vie.jpg", legende: "Bonne pratique : ligne de vie vérifiée avant accès" },
+  // { src: "images/chantier-exemplaire-nantes.jpg", legende: "Chantier exemplaire — agence de Nantes" },
+];
+
+/* Liens de la section Animation & signalement */
+const LIENS = {
+  quizDuMois: "",          // 👉 URL "Intégrer" du Google Form du mois (laisser vide = message d'attente)
+  classementAgences: "#",  // 👉 URL de ton dashboard Apps Script
+  signalement: "#"         // 👉 URL du formulaire de remontée de situations dangereuses
+};
+
+/* ================================================================
+   RENDU AUTOMATIQUE — pas besoin de toucher en dessous
+   ================================================================ */
+
+/* ================================================================
+   VISIONNEUSE PDF
+   👉 Dans DOCUMENTS et FLASHS, colle simplement le lien de partage
+      Google Drive (clic droit → Partager → Copier le lien).
+      Le portail le convertit automatiquement en mode intégré.
+      Un lien direct vers un .pdf fonctionne aussi.
+   ================================================================ */
+
+function urlEmbedPdf(url) {
+  // Lien Google Drive → format /preview intégrable
+  const drive = url.match(/drive\.google\.com\/file\/d\/([^/?#]+)/) ||
+                url.match(/[?&]id=([^&#]+)/);
+  if (drive) return "https://drive.google.com/file/d/" + drive[1] + "/preview";
+  return url; // PDF direct ou autre page intégrable
+}
+
+const overlay = document.getElementById("pdf-overlay");
+const pdfIframe = document.getElementById("pdf-iframe");
+const pdfTitre = document.getElementById("pdf-titre");
+const pdfOnglet = document.getElementById("pdf-nouvel-onglet");
+
+function ouvrirPdf(url, titre) {
+  pdfTitre.textContent = titre;
+  pdfOnglet.href = url;
+  pdfIframe.src = urlEmbedPdf(url);
+  overlay.classList.add("ouvert");
+  document.body.style.overflow = "hidden";
+}
+function fermerPdf() {
+  overlay.classList.remove("ouvert");
+  pdfIframe.src = "";
+  document.body.style.overflow = "";
+}
+document.getElementById("pdf-fermer").addEventListener("click", fermerPdf);
+overlay.addEventListener("click", e => { if (e.target === overlay) fermerPdf(); });
+document.addEventListener("keydown", e => { if (e.key === "Escape") fermerPdf(); });
+
+const grilleOutils = document.getElementById("grille-outils");
+OUTILS.forEach(o => {
+  const dispo = o.statut === "en-ligne";
+  const card = document.createElement("div");
+  card.className = "card" + (dispo ? "" : " soon");
+  card.innerHTML = `
+    <div class="icone">${o.icone}</div>
+    <h3>${o.titre}</h3>
+    <span class="statut ${o.statut}">${dispo ? "En ligne" : "Bientôt disponible"}</span>
+    <p>${o.description}</p>
+    ${dispo
+      ? `<a class="btn btn-rouge" href="${o.url}" target="_blank" rel="noopener">Ouvrir l'outil →</a>`
+      : `<span class="btn" aria-disabled="true">En préparation</span>`}
+  `;
+  grilleOutils.appendChild(card);
+});
+
+const listeFlashs = document.getElementById("liste-flashs");
+const BADGES = {
+  "accident-grave": "Accident grave",
+  "presqu-accident": "Presqu'accident",
+  "alerte": "Alerte réseau"
+};
+if (FLASHS.length === 0) {
+  listeFlashs.innerHTML = `<div class="flash-vide">Aucun flash sécurité en cours. C'est une bonne nouvelle — continuons comme ça. 💪</div>`;
+} else {
+  FLASHS.forEach(f => {
+    const bloc = document.createElement("article");
+    bloc.className = "flash " + f.type;
+    bloc.innerHTML = `
+      <div class="flash-meta">
+        <span class="flash-badge">${BADGES[f.type] || "Flash"}</span>
+        <span class="date">📅 ${f.date}</span>
+        <span class="agence">📍 ${f.agence}</span>
+      </div>
+      <h3>${f.titre}</h3>
+      <p class="faits">${f.faits}</p>
+      <div class="retenir"><strong>Ce que le réseau doit retenir</strong>${f.retenir}</div>
+      ${f.photo ? `<figure class="flash-photo"><img src="${f.photo}" alt="${f.titre}" loading="lazy"></figure>` : ""}
+      ${f.pdf && f.pdf !== "#" ? `<a class="flash-lien" href="${f.pdf}" data-titre="${f.titre}">📄 Lire le flash complet →</a>` : `<span class="flash-lien" style="color:var(--gris-texte);cursor:default">📄 Flash complet : bientôt disponible</span>`}
+    `;
+    const photo = bloc.querySelector(".flash-photo");
+    if (photo) photo.addEventListener("click", () => ouvrirImage(f.photo, f.titre));
+    const lien = bloc.querySelector(".flash-lien");
+    if (lien) lien.addEventListener("click", e => { e.preventDefault(); ouvrirPdf(f.pdf, "Flash sécurité — " + f.titre); });
+    listeFlashs.appendChild(bloc);
+  });
+}
+
+const grilleDocs = document.getElementById("grille-docs");
+DOCUMENTS.forEach(g => {
+  const bloc = document.createElement("div");
+  bloc.className = "doc-groupe";
+  const ul = document.createElement("ul");
+  g.liens.forEach(l => {
+    const li = document.createElement("li");
+    const a = document.createElement("a");
+    a.textContent = l.titre;
+    a.href = l.url;
+    if (l.url && l.url !== "#") {
+      a.addEventListener("click", e => { e.preventDefault(); ouvrirPdf(l.url, l.titre); });
+    }
+    li.appendChild(a);
+    ul.appendChild(li);
+  });
+  bloc.innerHTML = `<h3>${g.groupe}</h3>`;
+  bloc.appendChild(ul);
+  grilleDocs.appendChild(bloc);
+});
+
+/* Animation sécurité */
+const quiz = document.getElementById("quiz-iframe");
+if (LIENS.quizDuMois) {
+  quiz.src = LIENS.quizDuMois;
+} else {
+  quiz.outerHTML = `<p style="padding:30px;text-align:center;background:var(--gris-fond);border-radius:8px;color:var(--gris-texte)">Le quiz du mois sera publié ici. Revenez bientôt !</p>`;
+}
+/* ---- Lightbox image ---- */
+const imgOverlay = document.getElementById("img-overlay");
+const imgPleine = document.getElementById("img-pleine");
+const imgLegende = document.getElementById("img-legende");
+
+function ouvrirImage(src, legende) {
+  imgPleine.src = src;
+  imgPleine.alt = legende || "";
+  imgLegende.textContent = legende || "";
+  imgOverlay.classList.add("ouvert");
+  document.body.style.overflow = "hidden";
+}
+function fermerImage() {
+  imgOverlay.classList.remove("ouvert");
+  imgPleine.src = "";
+  document.body.style.overflow = "";
+}
+document.getElementById("img-fermer").addEventListener("click", fermerImage);
+imgOverlay.addEventListener("click", e => { if (e.target === imgOverlay) fermerImage(); });
+document.addEventListener("keydown", e => { if (e.key === "Escape") fermerImage(); });
+
+function rendreGalerie(conteneur, photos, messageVide) {
+  if (!photos.length) {
+    if (messageVide) conteneur.innerHTML = `<div class="galerie-vide" style="grid-column:1/-1">${messageVide}</div>`;
+    return false;
+  }
+  photos.forEach(p => {
+    const item = document.createElement("figure");
+    item.className = "galerie-item";
+    item.innerHTML = `<img src="${p.src}" alt="${p.legende || ""}" loading="lazy"><div class="legende">${p.legende || ""}</div>`;
+    item.addEventListener("click", () => ouvrirImage(p.src, p.legende));
+    conteneur.appendChild(item);
+  });
+  return true;
+}
+
+/* Galerie principale */
+rendreGalerie(
+  document.getElementById("grille-galerie"),
+  GALERIE,
+  "Les premières photos du réseau arrivent bientôt. Envoyez vos bonnes pratiques au service QHSE ! 📸"
+);
+
+/* Photos d'animation : le bandeau ne s'affiche que s'il y a des photos */
+if (rendreGalerie(document.getElementById("anim-photos"), ANIM_PHOTOS)) {
+  document.getElementById("anim-photos-bloc").style.display = "";
+}
+
+/* Affiche du thème du mois */
+if (THEME_AFFICHE) {
+  const affiche = document.getElementById("theme-affiche");
+  document.getElementById("theme-affiche-img").src = THEME_AFFICHE;
+  affiche.classList.add("visible");
+  affiche.addEventListener("click", () => ouvrirImage(THEME_AFFICHE, document.getElementById("theme-titre").textContent));
+}
+
+document.getElementById("theme-lien").href = LIENS.classementAgences;
+document.getElementById("lien-signalement").href = LIENS.signalement;
+</script>
+
+</body>
+</html>
