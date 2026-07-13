@@ -203,6 +203,14 @@ section{padding-top:64px}
   background:var(--blanc);border:1px dashed var(--gris-ligne);border-radius:var(--radius);
   padding:30px;text-align:center;color:var(--gris-texte);
 }
+.flash-archives{
+  display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  background:var(--anthracite);color:var(--blanc);
+  border-radius:var(--radius);padding:18px 26px;box-shadow:var(--shadow);
+}
+.flash-archives .texte{font-weight:600;font-size:15px}
+.flash-archives .texte span{color:#9BA1A8;font-weight:500;font-size:13.5px;display:block}
+.flash-archives .btn{padding:10px 18px;font-size:14px}
 
 /* ===== VISIONNEUSE PDF ===== */
 .pdf-overlay{
@@ -249,6 +257,21 @@ section{padding-top:64px}
 }
 .flash-photo img{display:block;width:100%;height:auto}
 .flash-photo:hover img{opacity:.92}
+
+/* Aperçu cliquable du PDF (miniature générée par Drive) */
+.flash-apercu{
+  margin-top:16px;max-width:320px;cursor:pointer;
+  border:1px solid var(--gris-ligne);border-radius:8px;overflow:hidden;
+  background:var(--blanc);box-shadow:var(--shadow);
+  transition:transform .15s,box-shadow .15s;position:relative;
+}
+.flash-apercu:hover{transform:translateY(-3px);box-shadow:var(--shadow-hover)}
+.flash-apercu img{display:block;width:100%;height:auto;border-bottom:3px solid var(--rouge)}
+.flash-apercu .apercu-legende{
+  display:flex;align-items:center;gap:8px;
+  padding:10px 14px;font-size:13.5px;font-weight:700;color:var(--rouge);
+  font-family:'Barlow Condensed',sans-serif;letter-spacing:.06em;text-transform:uppercase;
+}
 
 .galerie-grille{
   display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;
@@ -633,7 +656,7 @@ const FLASHS = [
     titre: "Chute d'un technicien depuis une toiture",
     faits: "Lors d'une intervention de maintenance, un technicien a chuté depuis la toiture. Blessures graves. L'analyse des causes (méthode Ishikawa) a mis en évidence des défaillances dans la préparation de l'intervention et la mise en œuvre des protections.",
     retenir: "Aucune montée en toiture sans analyse de risque préalable et protection collective en place. En cas de doute sur les conditions d'accès : STOP CHANTIER et appel du service QHSE. La règle « zéro chute de toit » n'admet aucune exception.",
-    pdf: "https://drive.google.com/file/d/1Ghlo65CZDHC1cjusWjKVidRZi1n3Oi3a/view?usp=drive_link"   // 👉 colle ici le lien Drive du flash : le bouton « Lire le flash complet » apparaîtra automatiquement
+    pdf: ""   // 👉 colle ici le lien Drive du flash : le bouton « Lire le flash complet » apparaîtra automatiquement
   },
   {
     type: "presqu-accident",
@@ -686,7 +709,8 @@ const GALERIE = [
 const LIENS = {
   quizDuMois: "",          // 👉 URL "Intégrer" du Google Form du mois (laisser vide = message d'attente)
   classementAgences: "#",  // 👉 URL de ton dashboard Apps Script
-  signalement: "#"         // 👉 URL du formulaire de remontée de situations dangereuses
+  signalement: "#",        // 👉 URL du formulaire de remontée de situations dangereuses
+  archivesFlashs: "https://drive.google.com/drive/folders/1ZqJvKPzYUELEiPZEEacujMgNhuH0SPNf"  // 👉 dossier Drive de TOUS les flashs (s'ouvre dans un nouvel onglet)
 };
 
 /* ================================================================
@@ -701,11 +725,16 @@ const LIENS = {
       Un lien direct vers un .pdf fonctionne aussi.
    ================================================================ */
 
+function idDrive(url) {
+  const m = (url || "").match(/drive\.google\.com\/file\/d\/([^/?#]+)/) ||
+            (url || "").match(/[?&]id=([^&#]+)/);
+  return m ? m[1] : null;
+}
+
 function urlEmbedPdf(url) {
   // Lien Google Drive → format /preview intégrable
-  const drive = url.match(/drive\.google\.com\/file\/d\/([^/?#]+)/) ||
-                url.match(/[?&]id=([^&#]+)/);
-  if (drive) return "https://drive.google.com/file/d/" + drive[1] + "/preview";
+  const id = idDrive(url);
+  if (id) return "https://drive.google.com/file/d/" + id + "/preview";
   return url; // PDF direct ou autre page intégrable
 }
 
@@ -753,10 +782,14 @@ const BADGES = {
   "presqu-accident": "Presqu'accident",
   "alerte": "Alerte réseau"
 };
+/* Seul le flash le plus récent (le 1er de la liste) est affiché.
+   Les précédents restent dans le tableau : il suffit de réordonner pour changer l'affiche. */
+const FLASHS_AFFICHES = 1;
+
 if (FLASHS.length === 0) {
   listeFlashs.innerHTML = `<div class="flash-vide">Aucun flash sécurité en cours. C'est une bonne nouvelle — continuons comme ça. 💪</div>`;
 } else {
-  FLASHS.forEach(f => {
+  FLASHS.slice(0, FLASHS_AFFICHES).forEach(f => {
     const bloc = document.createElement("article");
     bloc.className = "flash " + f.type;
     bloc.innerHTML = `
@@ -773,10 +806,40 @@ if (FLASHS.length === 0) {
     `;
     const photo = bloc.querySelector(".flash-photo");
     if (photo) photo.addEventListener("click", () => ouvrirImage(f.photo, f.titre));
-    const lien = bloc.querySelector(".flash-lien");
+    const lien = bloc.querySelector("a.flash-lien");
     if (lien) lien.addEventListener("click", e => { e.preventDefault(); ouvrirPdf(f.pdf, "Flash sécurité — " + f.titre); });
+
+    /* Aperçu automatique du PDF (miniature Drive) : clic → visionneuse */
+    const id = idDrive(f.pdf);
+    if (id) {
+      const apercu = document.createElement("figure");
+      apercu.className = "flash-apercu";
+      apercu.innerHTML = `
+        <img src="https://drive.google.com/thumbnail?id=${id}&sz=w640" alt="Aperçu — ${f.titre}" loading="lazy">
+        <div class="apercu-legende">📄 Cliquer pour lire le flash</div>
+      `;
+      apercu.addEventListener("click", () => ouvrirPdf(f.pdf, "Flash sécurité — " + f.titre));
+      /* Si Drive ne fournit pas de miniature (droits, format...), on retire l'aperçu sans casser la carte */
+      apercu.querySelector("img").addEventListener("error", () => apercu.remove());
+      const ancre = bloc.querySelector(".flash-lien");
+      bloc.insertBefore(apercu, ancre);
+    }
+
     listeFlashs.appendChild(bloc);
   });
+}
+
+/* Bandeau d'accès aux archives (tous les flashs du réseau, sur le Drive) */
+if (LIENS.archivesFlashs && LIENS.archivesFlashs !== "#") {
+  const archives = document.createElement("div");
+  archives.className = "flash-archives";
+  archives.innerHTML = `
+    <div class="texte">🗂️ Tous les flashs sécurité du réseau
+      <span>L'historique complet est archivé sur le Drive QHSE</span>
+    </div>
+    <a class="btn btn-rouge" href="${LIENS.archivesFlashs}" target="_blank" rel="noopener">Consulter les archives ↗</a>
+  `;
+  listeFlashs.appendChild(archives);
 }
 
 const grilleDocs = document.getElementById("grille-docs");
