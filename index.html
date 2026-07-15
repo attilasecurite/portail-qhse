@@ -297,7 +297,7 @@ footer .marque span{color:var(--rouge)}
    Colle ici l'URL de ton Google Sheet (ou juste l'identifiant).
    Le Sheet doit être "Publié sur le Web" (Fichier → Partager → Publier sur le Web).
    ================================================================ */
-const SHEET_URL = "https://docs.google.com/spreadsheets/d/1BljZ-EcEyA34Ecr2Ny-ax3sQ-TOS_BSBeTdMvL3dYAs/edit?gid=663869006#gid=663869006";
+const SHEET_URL = "COLLE_ICI_L_URL_DE_TON_GOOGLE_SHEET";
 
 
 /* ================================================================
@@ -326,15 +326,25 @@ function urlImageDriveHD(url) {
   return id ? "https://drive.google.com/thumbnail?id=" + id + "&sz=w1600" : url;
 }
 
-/* --- Visionneuse PDF --- */
-const overlay = document.getElementById("pdf-overlay");
-const pdfIframe = document.getElementById("pdf-iframe");
-const pdfTitre = document.getElementById("pdf-titre");
-const pdfOnglet = document.getElementById("pdf-nouvel-onglet");
-function ouvrirPdf(url, titre) { pdfTitre.textContent = titre; pdfOnglet.href = url; pdfIframe.src = urlEmbedPdf(url); overlay.classList.add("ouvert"); document.body.style.overflow = "hidden"; }
-function fermerPdf() { overlay.classList.remove("ouvert"); pdfIframe.src = ""; document.body.style.overflow = ""; }
+/* --- Ouverture PDF --- */
+function ouvrirPdf(url, titre) {
+  const id = idDrive(url);
+  if (id) {
+    // Drive PDF → ouvrir dans le viewer Google (nouvel onglet)
+    window.open("https://drive.google.com/file/d/" + id + "/view", "_blank");
+  } else {
+    // PDF direct (non-Drive) → ouvrir dans la visionneuse intégrée
+    const overlay = document.getElementById("pdf-overlay");
+    document.getElementById("pdf-titre").textContent = titre;
+    document.getElementById("pdf-nouvel-onglet").href = url;
+    document.getElementById("pdf-iframe").src = url;
+    overlay.classList.add("ouvert");
+    document.body.style.overflow = "hidden";
+  }
+}
+function fermerPdf() { const o = document.getElementById("pdf-overlay"); o.classList.remove("ouvert"); document.getElementById("pdf-iframe").src = ""; document.body.style.overflow = ""; }
 document.getElementById("pdf-fermer").addEventListener("click", fermerPdf);
-overlay.addEventListener("click", e => { if (e.target === overlay) fermerPdf(); });
+document.getElementById("pdf-overlay").addEventListener("click", e => { if (e.target === e.currentTarget) fermerPdf(); });
 
 /* --- Lightbox image --- */
 const imgOverlay = document.getElementById("img-overlay");
