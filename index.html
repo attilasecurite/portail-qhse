@@ -172,6 +172,23 @@ footer .marque span{color:var(--rouge)}
 .chargement{text-align:center;padding:40px;color:var(--gris-texte);font-size:15px}
 .chargement::before{content:"⏳ ";font-size:20px}
 .erreur-sheet{background:#FFF3F3;border:1px solid #F5C6C6;border-radius:var(--radius);padding:24px;color:#9B1C1C;font-size:14.5px;margin-top:16px}
+
+/* ===== ACTUALITÉS ===== */
+.actu-liste{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px}
+.actu-card{
+  background:var(--blanc);border:1px solid var(--gris-ligne);border-radius:var(--radius);
+  box-shadow:var(--shadow);overflow:hidden;
+  transition:transform .15s,box-shadow .15s;
+}
+.actu-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-hover)}
+.actu-card .actu-img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;cursor:zoom-in}
+.actu-card .actu-body{padding:18px 20px}
+.actu-card .actu-date{font-size:12.5px;font-weight:700;color:var(--rouge);text-transform:uppercase;letter-spacing:.08em;font-family:'Barlow Condensed',sans-serif}
+.actu-card h3{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:20px;text-transform:uppercase;letter-spacing:.02em;margin:6px 0 8px}
+.actu-card p{color:var(--gris-texte);font-size:14.5px;line-height:1.5}
+.actu-card .actu-lien{display:inline-flex;align-items:center;gap:6px;margin-top:12px;font-weight:700;font-size:14px;color:var(--rouge)}
+.actu-card .actu-lien:hover{text-decoration:underline}
+.actu-vide{grid-column:1/-1;background:var(--blanc);border:1px dashed var(--gris-ligne);border-radius:var(--radius);padding:30px;text-align:center;color:var(--gris-texte)}
 </style>
 </head>
 <body>
@@ -187,8 +204,7 @@ footer .marque span{color:var(--rouge)}
       <a href="#flash">Flash sécurité</a>
       <a href="#documents">Documentation</a>
       <a href="#animation">Animation sécurité</a>
-      <a href="#galerie">En images</a>
-      <a href="#certifications">Certifications</a>
+      <a href="#actualites">Actualités</a>
       <a href="#contact">Contact</a>
     </nav>
   </div>
@@ -249,17 +265,9 @@ footer .marque span{color:var(--rouge)}
     </div>
   </section>
 
-  <section id="galerie">
-    <div class="section-head"><h2>Le réseau en images</h2><span class="sub">Bonnes pratiques, journées sécurité, chantiers exemplaires</span></div>
-    <div class="galerie-grille" id="grille-galerie"><div class="chargement">Chargement des photos…</div></div>
-  </section>
-
-  <section id="certifications">
-    <div class="section-head"><h2>Certifications &amp; trajectoire</h2><span class="sub">Où en est le réseau</span></div>
-    <div class="certifs">
-      <div class="certif"><h3>MASE</h3><div class="objectif">Pilote agence de Grigny — déploiement réseau à suivre</div><div class="barre"><span style="width:45%"></span></div><div class="valeur">Pilote en cours</div></div>
-      <div class="certif"><h3>EcoVadis</h3><div class="objectif">Objectif médaille Silver 2027 · Gold 2028</div><div class="barre"><span style="width:60%"></span></div><div class="valeur">Score actuel : 60/100</div></div>
-    </div>
+  <section id="actualites">
+    <div class="section-head"><h2>Actualités</h2><span class="sub">Infos réseau, photos terrain, avancées certifications</span></div>
+    <div class="actu-liste" id="liste-actus"><div class="chargement">Chargement des actualités…</div></div>
   </section>
 
   <section id="contact">
@@ -297,7 +305,7 @@ footer .marque span{color:var(--rouge)}
    Colle ici l'URL de ton Google Sheet (ou juste l'identifiant).
    Le Sheet doit être "Publié sur le Web" (Fichier → Partager → Publier sur le Web).
    ================================================================ */
-const SHEET_URL = "https://docs.google.com/spreadsheets/d/1BljZ-EcEyA34Ecr2Ny-ax3sQ-TOS_BSBeTdMvL3dYAs/edit?gid=2042277558#gid=2042277558";
+const SHEET_URL = "COLLE_ICI_L_URL_DE_TON_GOOGLE_SHEET";
 
 
 /* ================================================================
@@ -522,17 +530,52 @@ function rendreAnimation(config) {
   if (c.signalement_url) document.getElementById("lien-signalement").href = c.signalement_url;
 }
 
+/* --- Rendu des actualités --- */
+function rendreActus(data) {
+  const el = document.getElementById("liste-actus");
+  el.innerHTML = "";
+  if (!data.length) {
+    el.innerHTML = `<div class="actu-vide">Les premières actualités du réseau arrivent bientôt. 📰</div>`;
+    return;
+  }
+  data.forEach(a => {
+    const card = document.createElement("article");
+    card.className = "actu-card";
+    const imgSrc = urlImageDrive(a.image || a.lien_image || "");
+    const imgHD = urlImageDriveHD(a.image || a.lien_image || "");
+    const hasImg = !!(a.image || a.lien_image);
+    const hasLien = !!(a.lien_pdf && a.lien_pdf !== "#");
+    card.innerHTML = `
+      ${hasImg ? `<img class="actu-img" src="${imgSrc}" alt="${a.titre || ""}" loading="lazy">` : ""}
+      <div class="actu-body">
+        <div class="actu-date">${a.date || ""}</div>
+        <h3>${a.titre || ""}</h3>
+        <p>${a.texte || ""}</p>
+        ${hasLien ? `<a class="actu-lien" href="${a.lien_pdf}">📄 En savoir plus →</a>` : ""}
+      </div>`;
+    if (hasImg) {
+      const img = card.querySelector(".actu-img");
+      img.addEventListener("click", () => ouvrirImage(a.image || a.lien_image, a.titre));
+      img.addEventListener("error", () => img.remove());
+    }
+    if (hasLien) {
+      card.querySelector(".actu-lien").addEventListener("click", e => { e.preventDefault(); ouvrirPdf(a.lien_pdf, a.titre); });
+    }
+    el.appendChild(card);
+  });
+}
+
 /* --- Chargement principal --- */
 async function init() {
   const sheetId = getSheetId(SHEET_URL);
 
   // Charger tous les onglets en parallèle
-  const [outils, flashs, docs, config, photos] = await Promise.allSettled([
+  const [outils, flashs, docs, config, actus] = await Promise.allSettled([
     fetchTab(sheetId, "Outils"),
     fetchTab(sheetId, "Flashs"),
     fetchTab(sheetId, "Documents"),
     fetchTab(sheetId, "Config"),
-    fetchTab(sheetId, "Photos"),
+    fetchTab(sheetId, "Actualites"),
   ]);
 
   // Config (onglet clé/valeur)
@@ -554,19 +597,9 @@ async function init() {
   if (docs.status === "fulfilled") rendreDocs(docs.value);
   else afficherErreur(document.getElementById("grille-docs"), "Impossible de charger les documents");
 
-  // Photos (colonne "section" = "animation" ou "galerie")
-  if (photos.status === "fulfilled") {
-    const animPhotos = photos.value.filter(p => (p.section || "").toLowerCase().includes("anim"));
-    const galeriePhotos = photos.value.filter(p => (p.section || "").toLowerCase().includes("galerie"));
-    if (rendreGalerie(document.getElementById("anim-photos"), animPhotos)) {
-      document.getElementById("anim-photos-bloc").style.display = "";
-    }
-    rendreGalerie(document.getElementById("grille-galerie"), galeriePhotos,
-      "Les premières photos du réseau arrivent bientôt. Envoyez vos bonnes pratiques au service QHSE ! 📸");
-  } else {
-    rendreGalerie(document.getElementById("grille-galerie"), [],
-      "Les premières photos du réseau arrivent bientôt. Envoyez vos bonnes pratiques au service QHSE ! 📸");
-  }
+  // Actualités
+  if (actus.status === "fulfilled") rendreActus(actus.value);
+  else rendreActus([]);
 }
 
 init();
